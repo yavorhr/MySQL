@@ -4,7 +4,7 @@
 
 ## Course Description
 
-The [Databases](https://softuni.bg/trainings/3010/java-oop-october-2020) are the standard way to use dynamic information in modern applications, making them an integral part of almost any application. The course emphasizes the fundamentals of the databases and will introduce you to one of the most widely used database management systems (DBMS - database management system), in the development of modern applications - **MySQL**. You will acquire skills for working with **relational databases**, and will focus on basic functionalities such as working with **tables**, **grouping functions**, **transactions**, **procedures** and more. This course provides the basics on working with the database and it makes it easier to understand how it is funcitoning in real environment.
+The [Databases](https://softuni.bg/trainings/3422/mysql-may-2021) are the standard way to use dynamic information in modern applications, making them an integral part of almost any application. The course emphasizes the fundamentals of the databases and will introduce you to one of the most widely used database management systems (DBMS - database management system), in the development of modern applications - **MySQL**. You will acquire skills for working with **relational databases**, and will focus on basic functionalities such as working with **tables**, **grouping functions**, **transactions**, **procedures** and more. This course provides the basics on working with the database and it makes it easier to understand how it is funcitoning in real environment.
 
 ## Acquired skills
 
