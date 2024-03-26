@@ -1,11 +1,9 @@
-# LAB 
-
-#1.Create new Database ------------------------------------------------------------------------
+#01.Create new Database ------------------------------------------------------------------------
 
 CREATE SCHEMA `gamebar`;
 USE gamebar;
 
-#2.Create tables ------------------------------------------------------------------------
+#02.Create tables ------------------------------------------------------------------------
 
 CREATE TABLE `employees` (
 `id` INT PRIMARY KEY AUTO_INCREMENT,
@@ -22,7 +20,15 @@ CREATE TABLE `products` (
 `id` INT PRIMARY KEY NOT NULL,
 `name` VARCHAR(40) NOT NULL,
 `category_id` INT
-); 
+);
+ 
+#03. Insert Data in Tables ------------------------------------------------------------------------
+
+INSERT INTO `employees` (`first_name`, `last_name`)
+VALUES
+('Ivan', 'Ivanov'),
+('Dragan', 'Ivanov'),
+('Georgi', 'Ivanov');
 
 # ADDITIONAL OPERATIONS
 
