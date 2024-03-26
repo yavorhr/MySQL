@@ -30,6 +30,12 @@ VALUES
 ('Dragan', 'Ivanov'),
 ('Georgi', 'Ivanov');
 
+#04. Alter Tables --------------------------------------------------------------------------------
+
+ALTER TABLE `employees`
+ADD COLUMN `middle_name` VARCHAR(20);
+
+
 # ADDITIONAL OPERATIONS
 
 
