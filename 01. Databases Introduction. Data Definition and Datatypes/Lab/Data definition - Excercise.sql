@@ -1,3 +1,32 @@
+# LAB 
+
+#1.Create new Database ------------------------------------------------------------------------
+
+CREATE SCHEMA `gamebar`;
+USE gamebar;
+
+#2.Create tables ------------------------------------------------------------------------
+
+CREATE TABLE `employees` (
+`id` INT PRIMARY KEY AUTO_INCREMENT,
+`first_name` VARCHAR(40) NOT NULL,
+`last_name` VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE `categories` (
+`id` INT PRIMARY KEY AUTO_INCREMENT,
+`name` VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE `products` (
+`id` INT PRIMARY KEY NOT NULL,
+`name` VARCHAR(40) NOT NULL,
+`category_id` INT
+); 
+
+# ADDITIONAL OPERATIONS
+
+
 #1.Select Employee Information------------------------------------------------------------------------
 
 SELECT `id`, `first_name`, `last_name`, `job_title`
