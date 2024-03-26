@@ -47,8 +47,11 @@ REFERENCES `categories`(`id`);
 ALTER TABLE `employees`
 CHANGE COLUMN `middle_name` `middle_name` VARCHAR(100);
 
-# ADDITIONAL OPERATIONS
+#06. Drop Database ---------------------------------------------------------------------------
 
+DROP SCHEMA gamebar;
+
+# ADDITIONAL OPERATIONS
 
 #1.Select Employee Information------------------------------------------------------------------------
 
