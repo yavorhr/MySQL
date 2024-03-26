@@ -22,7 +22,7 @@ CREATE TABLE `products` (
 `category_id` INT
 );
  
-#03. Insert Data in Tables ------------------------------------------------------------------------
+#03. Insert Data in Tables ----------------------------------------------------------------------
 
 INSERT INTO `employees` (`first_name`, `last_name`)
 VALUES
@@ -34,6 +34,17 @@ VALUES
 
 ALTER TABLE `employees`
 ADD COLUMN `middle_name` VARCHAR(20);
+
+#04. Adding Constraints ---------------------------------------------------------------------------
+
+ALTER TABLE `products`
+ADD CONSTRAINT fk_products_categories
+FOREIGN KEY (`category_id`)
+REFERENCES `categories`(`id`);
+
+
+
+
 
 
 # ADDITIONAL OPERATIONS
