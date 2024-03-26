@@ -42,10 +42,10 @@ ADD CONSTRAINT fk_products_categories
 FOREIGN KEY (`category_id`)
 REFERENCES `categories`(`id`);
 
+#05. Modifying columns ---------------------------------------------------------------------------
 
-
-
-
+ALTER TABLE `employees`
+CHANGE COLUMN `middle_name` `middle_name` VARCHAR(100);
 
 # ADDITIONAL OPERATIONS
 
