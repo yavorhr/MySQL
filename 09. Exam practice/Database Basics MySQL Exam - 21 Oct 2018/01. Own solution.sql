@@ -56,7 +56,7 @@ FOREIGN KEY (`journey_id`)
 REFERENCES `journeys`(`id`)
 );
 
-# -- 01. Data Insertion
+# --- 01. Data Insertion
 
 INSERT INTO `travel_cards` (`card_number`, `job_during_journey`, `colonist_id`, `journey_id`)
     SELECT
@@ -73,11 +73,24 @@ INSERT INTO `travel_cards` (`card_number`, `job_during_journey`, `colonist_id`, 
           ELSE 'Engineer'
         END
       ) AS `job_during_journey`,
-      c.id,
+      c.`id`,
       (
         SUBSTR(c.`ucn`, 1,1)
       ) AS `journey_id`
     FROM `colonists` c
     WHERE c.`id` between 96 AND 100;
+
+# --- 02. Data Update
+
+UPDATE `journeys`
+SET `purpose` = (
+  CASE
+		  WHEN id % 2 = 0 THEN 'Medical'
+          WHEN id % 3 = 0 THEN 'Technical'
+          WHEN id % 5 = 0 THEN 'Educational'
+          WHEN id % 7 = 0 THEN 'Military'
+          ELSE `purpose`
+        END
+);
 
 
