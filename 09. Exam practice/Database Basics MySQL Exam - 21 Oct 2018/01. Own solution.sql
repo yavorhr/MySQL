@@ -209,7 +209,7 @@ ON p.`id` = sp.`planet_id`
 ORDER BY (DATEDIFF(j.`journey_end`,j.`journey_start` )) ASC
 LIMIT 1;
 
-# 14. Extract the shortest journey
+# --- 14. Extract the shortest journey
 
 SELECT tc.`job_during_journey`
 FROM `travel_cards` as tc
@@ -223,7 +223,7 @@ GROUP BY tc.`job_during_journey`
 ORDER BY COUNT(tc.`job_during_journey`)
 LIMIT 1;
  
-# 15. Get colonists count
+# --- 15. Get colonists count
 
 DELIMITER //
 CREATE DEFINER=`root`@`localhost` FUNCTION `udf_count_colonists_by_destination_planet`(planet_name VARCHAR (30)) RETURNS int
@@ -242,5 +242,23 @@ RETURN (
 END //
 DELIMITER ;
 
+# --- 16. Modify spaceship
+
+DELIMITER //
+CREATE PROCEDURE udp_modify_spaceship_light_speed_rate(spaceship_name VARCHAR(50), light_speed_rate_increse INT(11))
+  BEGIN
+    if (SELECT COUNT(ss.`name`) FROM `spaceships` as ss WHERE ss.`name` = spaceship_name > 0) 
+    THEN
+      UPDATE `spaceships` as ss
+        SET ss.`light_speed_rate` = ss.`light_speed_rate` + light_speed_rate_increse
+        WHERE ss.`name` = spaceship_name;
+    ELSE
+      SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Spaceship you are trying to modify does not exists.';
+      ROLLBACK;
+    END IF;
+  END //
+  
+DELIMITER ;
 
 
