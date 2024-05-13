@@ -101,6 +101,11 @@ DELETE FROM `colonists` AS c
     FROM `travel_cards` AS tc
   );
 
+# --- 04.Extract all travel cards
+
+SELECT `card_number`, `job_during_journey`
+FROM `travel_cards`
+ORDER BY `card_number` ASC;
 
 
 
