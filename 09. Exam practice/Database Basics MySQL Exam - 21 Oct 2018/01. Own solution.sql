@@ -162,3 +162,17 @@ JOIN `spaceports` as port
 ON j.`destination_spaceport_id` = port.`id`
 ORDER BY s.`light_speed_rate` DESC
 LIMIT 1;
+
+# --- 10.Extract spaceships with pilots younger than 30 years
+
+SELECT s.`name`, s.`manufacturer`, tc.`id`
+FROM `spaceships` AS s
+JOIN `journeys` AS j
+ON j.`spaceship_id` = s.`id`
+JOIN `travel_cards` AS tc
+ON tc.`journey_id` = j.`id`
+JOIN `colonists` as c
+ON c.`id` = tc.`colonist_id`
+WHERE tc.`job_during_journey` = 'Pilot' AND YEAR(c.`birth_date`) > YEAR(DATE_SUB('2019-01-01', INTERVAL 30 YEAR))
+ORDER BY s.`name`;
+
