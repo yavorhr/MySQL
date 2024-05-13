@@ -187,5 +187,16 @@ ON j.`destination_spaceport_id` = sp.`id`
 WHERE j.`purpose` = 'Educational'
 ORDER BY sp.`name` DESC;
 
+# --- 12. Extract all planets and their journey count
+
+SELECT p.`name` as `planet_name`, COUNT(j.`id`) as `journeys_count`
+FROM `planets` as p
+JOIN `spaceports` as sp
+ON p.`id` = sp.`planet_id`
+JOIN `journeys` as j
+ON j.`destination_spaceport_id` = sp.`id`
+GROUP BY p.`name`
+ORDER BY `journeys_count` DESC ,p.`name` DESC;
+
  
 
