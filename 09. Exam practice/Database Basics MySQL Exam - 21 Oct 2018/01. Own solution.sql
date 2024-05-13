@@ -223,4 +223,24 @@ GROUP BY tc.`job_during_journey`
 ORDER BY COUNT(tc.`job_during_journey`)
 LIMIT 1;
  
+# 15. Get colonists count
+
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` FUNCTION `udf_count_colonists_by_destination_planet`(planet_name VARCHAR (30)) RETURNS int
+    DETERMINISTIC
+BEGIN
+
+RETURN (
+	  SELECT COUNT(c.`id`)
+	  FROM `colonists` as c
+      JOIN `travel_cards` as tc on c.`id` = tc.`colonist_id`
+      JOIN `journeys` as j on tc.`journey_id` = j.`id`
+      JOIN `spaceports` s on j.`destination_spaceport_id` = s.`id`
+      JOIN `planets` as p on s.`planet_id` = p.`id`
+      WHERE p.`name` = planet_name
+);
+END //
+DELIMITER ;
+
+
 
