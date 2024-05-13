@@ -198,5 +198,17 @@ ON j.`destination_spaceport_id` = sp.`id`
 GROUP BY p.`name`
 ORDER BY `journeys_count` DESC ,p.`name` DESC;
 
+# --- 13. Extract the shortest journey
+
+SELECT j.`id`, p.`name` as `planet_name`, sp.`name` as `spaceport_name`, j.`purpose` as `journey_purpose`
+FROM `journeys` as j
+JOIN `spaceports` as sp
+ON j.`destination_spaceport_id` = sp.`id`
+JOIN `planets` as p
+ON p.`id` = sp.`planet_id`
+ORDER BY (DATEDIFF(j.`journey_end`,j.`journey_start` )) ASC
+LIMIT 1;
+
+ 
  
 
