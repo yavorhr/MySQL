@@ -107,5 +107,15 @@ SELECT `card_number`, `job_during_journey`
 FROM `travel_cards`
 ORDER BY `card_number` ASC;
 
+# --- 05. Extract all colonists
+
+SELECT 
+    c.`id`,
+    CONCAT_WS(' ', c.`first_name`, c.`last_name`) AS `full_name`,
+    c.`ucn`
+FROM
+    `colonists` AS c
+ORDER BY c.`first_name` ASC , c.`last_name` ASC , c.`id` ASC;
+
 
 
