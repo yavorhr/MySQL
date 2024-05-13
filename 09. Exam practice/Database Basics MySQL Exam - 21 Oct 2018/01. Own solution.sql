@@ -117,5 +117,15 @@ FROM
     `colonists` AS c
 ORDER BY c.`first_name` ASC , c.`last_name` ASC , c.`id` ASC;
 
+# --- 06.	Extract all military journeys
+
+SELECT 
+    j.`id`, j.`journey_start`, j.`journey_end`
+FROM
+    `journeys` AS j
+WHERE
+    j.`purpose` = 'Military'
+ORDER BY j.`journey_start` ASC;
+
 
 
