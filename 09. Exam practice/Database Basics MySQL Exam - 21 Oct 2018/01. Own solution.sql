@@ -152,3 +152,13 @@ FROM
     `journeys` AS j ON j.`id` = tc.`journey_id`
 WHERE j.`purpose` = 'Technical';
 
+# --- 09.Extract the fastest spaceship
+
+SELECT s.`name` AS `spaceship_name`, port.`name` AS `spaceport_name`
+FROM `spaceships` AS s
+JOIN `journeys` AS j
+ON j.`spaceship_id` = s.`id`
+JOIN `spaceports` as port
+ON j.`destination_spaceport_id` = port.`id`
+ORDER BY s.`light_speed_rate` DESC
+LIMIT 1;
