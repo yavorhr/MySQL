@@ -78,3 +78,9 @@ REFERENCES `courses`(`id`)
  DAY(`start_date`) as `university_id` 
  FROM `courses` as c
  WHERE c.`id` <= 5;
+ 
+ # --- 03. Update
+ 
+UPDATE `universities` as u
+SET u.`tuition_fee` =  u.`tuition_fee` + 300
+WHERE u.`id`BETWEEN 5 AND 12;
