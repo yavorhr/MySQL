@@ -104,3 +104,14 @@ WHERE `age` >= 21
 ORDER BY `first_name` DESC, `email` ASC, `id` ASC
 LIMIT 10;
   
+# --- 07. New students
+
+SELECT 
+CONCAT_WS(' ', s.`first_name`, s.`last_name`) as `full_name`,
+SUBSTRING(`email`, 2,10) as `username`,
+REVERSE(`phone`) as `password`
+FROM `students` as s
+LEFT JOIN `students_courses` as sc
+ON s.`id` = sc.`student_id`
+WHERE sc.`course_id` IS NULL
+ORDER BY `password` DESC;
