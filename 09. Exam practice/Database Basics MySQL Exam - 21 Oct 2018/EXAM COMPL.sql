@@ -115,3 +115,18 @@ LEFT JOIN `students_courses` as sc
 ON s.`id` = sc.`student_id`
 WHERE sc.`course_id` IS NULL
 ORDER BY `password` DESC;
+
+# --- 08. Students count
+
+SELECT 
+COUNT(sc.`student_id`) as `students_count`,
+u.`name` as `university_name`
+FROM `universities` as u
+JOIN `courses` as c
+ON u.`id` = c.`university_id`
+JOIN `students_courses` as sc
+ON  c.`id` = sc.`course_id`
+GROUP BY u.`id`
+HAVING `students_count` >= 8
+ORDER BY `students_count` DESC, `university_name` DESC;
+
