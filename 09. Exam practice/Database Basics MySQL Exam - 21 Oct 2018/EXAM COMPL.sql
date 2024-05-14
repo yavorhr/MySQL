@@ -1,195 +1,264 @@
-
-
-CREATE TABLE `countries`(
+CREATE TABLE `planets` (
 `id` INT PRIMARY KEY AUTO_INCREMENT,
-`name` VARCHAR(40) NOT NULL UNIQUE
+`name` VARCHAR(30) NOT NULL
 );
 
-CREATE TABLE `cities`(
+CREATE TABLE `spaceports` (
 `id` INT PRIMARY KEY AUTO_INCREMENT,
-`name` VARCHAR(40) NOT NULL UNIQUE,
-`population` INT,
-`country_id` INT NOT NULL,
-CONSTRAINT fk_cities_countries
-FOREIGN KEY (`country_id`)
-REFERENCES `countries` (`id`)
+`name` VARCHAR(50) NOT NULL,
+`planet_id` INT,
+CONSTRAINT fk_spaceports_planets
+FOREIGN KEY (`planet_id`)
+REFERENCES `planets` (`id`)
 );
 
-CREATE TABLE `universities`(
+CREATE TABLE `colonists` (
 `id` INT PRIMARY KEY AUTO_INCREMENT,
-`name` VARCHAR(60) NOT NULL UNIQUE,
-`address` VARCHAR(60) NOT NULL UNIQUE,
-`tuition_fee` DECIMAL(19,2) NOT NULL,
-`number_of_staff` INT,
-`city_id` INT,
-CONSTRAINT fk_universities_cities
-FOREIGN KEY (`city_id`)
-REFERENCES `cities` (`id`)
+`first_name` VARCHAR(20)  NOT NULL,
+`last_name` VARCHAR(20)  NOT NULL,
+`ucn` CHAR(10) NOT NULL UNIQUE,
+`birth_date` DATE NOT NULL
 );
 
-CREATE TABLE `courses`(
+CREATE TABLE `spaceships` (
 `id` INT PRIMARY KEY AUTO_INCREMENT,
-`name` VARCHAR(40) NOT NULL UNIQUE,
-`duration_hours` DECIMAL(19,2),
-`start_date` DATE,
-`teacher_name` VARCHAR(60) NOT NULL UNIQUE,
-`description` TEXT,
-`university_id` INT,
-CONSTRAINT fk_courses_universities
-FOREIGN KEY (`university_id`)
-REFERENCES `universities` (`id`)
+`name` VARCHAR(50)  NOT NULL,
+`manufacturer` VARCHAR(30)  NOT NULL,
+`light_speed_rate` INT DEFAULT 0
 );
 
-CREATE TABLE `students`(
+CREATE TABLE `journeys` (
 `id` INT PRIMARY KEY AUTO_INCREMENT,
-`first_name` VARCHAR(40) NOT NULL,
-`last_name` VARCHAR(40) NOT NULL,
-`age` INT,
-`phone` VARCHAR(20) NOT NULL UNIQUE,
-`email` VARCHAR(255) NOT NULL UNIQUE,
-`is_graduated` BOOLEAN NOT NULL,
-`city_id` INT,
-CONSTRAINT fk_students_courses
-FOREIGN KEY (`city_id`)
-REFERENCES `cities` (`id`)
+`journey_start` DATETIME NOT NULL,
+`journey_end` DATETIME NOT NULL,
+`purpose` ENUM('Medical', 'Technical', 'Educational', 'Military'),
+`destination_spaceport_id` INT,
+`spaceship_id` INT,
+CONSTRAINT fk_journeys_spaceports
+FOREIGN KEY (`destination_spaceport_id`)
+REFERENCES `spaceports`(`id`),
+CONSTRAINT fk_journeys_spaceships
+FOREIGN KEY (`spaceship_id`)
+REFERENCES `spaceships`(`id`)
 );
 
-CREATE TABLE `students_courses` (
-`grade` DECIMAL(19,2) NOT NULL,
-`student_id` INT NOT NULL,
-`course_id` INT NOT NULL,
-KEY pk_students_courses (`student_id`,`course_id`),
-CONSTRAINT fk_students_courses_students
-FOREIGN KEY (`student_id`) 
-REFERENCES `students` (`id`),
-CONSTRAINT fk_students_courses_courses
-FOREIGN KEY (`course_id`)
-REFERENCES `courses`(`id`)
+CREATE TABLE `travel_cards`(
+`id` INT PRIMARY KEY AUTO_INCREMENT,
+`card_number` CHAR(10) UNIQUE NOT NULL,
+`job_during_journey` ENUM('Pilot', 'Engineer', 'Trooper', 'Cleaner', 'Cook'),
+`colonist_id` INT,
+`journey_id` INT,
+CONSTRAINT fk_travel_cards_colonists
+FOREIGN KEY (`colonist_id`)
+REFERENCES `colonists`(`id`),
+CONSTRAINT fk_travel_cards_journeys
+FOREIGN KEY (`journey_id`)
+REFERENCES `journeys`(`id`)
 );
 
-# --- 02. Insert
+# --- 01. Data Insertion
 
-INSERT INTO `courses` (`name`, `duration_hours`, `start_date`, `teacher_name`, `description`, `university_id`)
-SELECT (CONCAT(c.`teacher_name`, ' course')) as `name`,
-CHAR_LENGTH(`name`)/10 as `duration_hours`, 
-DATE(c.`start_date`+5) as `start_date`,
-REVERSE(c.`teacher_name`) as `teacher_name` ,
-CONCAT('Course ', c.`teacher_name`, REVERSE(c.`description`)) as `description`, 
-DAY(`start_date`) as `university_id` 
-FROM `courses` as c
-WHERE c.`id` <= 5;
- 
- # --- 03. Update
- 
-UPDATE `universities` as u
-SET u.`tuition_fee` =  u.`tuition_fee` + 300
-WHERE u.`id`BETWEEN 5 AND 12;
+INSERT INTO `travel_cards` (`card_number`, `job_during_journey`, `colonist_id`, `journey_id`)
+    SELECT
+      (
+        CASE
+          WHEN c.`birth_date` > '1980-01-01' THEN CONCAT_WS('', YEAR(c.`birth_date`), DAY(c.`birth_date`), SUBSTR(c.`ucn`, 1, 4))
+          ELSE CONCAT_WS('', year(c.`birth_date`), MONTH(c.`birth_date`), SUBSTR(c.`ucn`, 7, 10))
+        END
+      ) AS `card_number`,
+      (
+        CASE
+          WHEN c.`id` % 2 = 0 THEN 'Pilot'
+          WHEN c.`id` % 3 = 0 THEN 'Cook'
+          ELSE 'Engineer'
+        END
+      ) AS `job_during_journey`,
+      c.`id`,
+      (
+        SUBSTR(c.`ucn`, 1,1)
+      ) AS `journey_id`
+    FROM `colonists` c
+    WHERE c.`id` between 96 AND 100;
 
- # --- 04. Delete
- 
- DELETE u 
- FROM `universities` as u
- WHERE u.`number_of_staff` IS NULL;
- 
- # --- 05. Cities
-  
-  SELECT * FROM `cities`
-  ORDER BY `population` DESC;
-  
-# --- 06. Students age
+# --- 02. Data Update
 
-SELECT `first_name`, `last_name`, `age`, `phone`, `email`
-FROM `students`
-WHERE `age` >= 21
-ORDER BY `first_name` DESC, `email` ASC, `id` ASC
-LIMIT 10;
-  
-# --- 07. New students
+UPDATE `journeys`
+SET `purpose` = (
+  CASE
+		  WHEN id % 2 = 0 THEN 'Medical'
+          WHEN id % 3 = 0 THEN 'Technical'
+          WHEN id % 5 = 0 THEN 'Educational'
+          WHEN id % 7 = 0 THEN 'Military'
+          ELSE `purpose`
+        END
+);
+
+# --- 03. Data Deletion
+
+DELETE FROM `colonists` AS c
+  WHERE c.`id` NOT IN (
+    SELECT tc.`colonist_id` 
+    FROM `travel_cards` AS tc
+  );
+
+# --- 04.Extract all travel cards
+
+SELECT `card_number`, `job_during_journey`
+FROM `travel_cards`
+ORDER BY `card_number` ASC;
+
+# --- 05. Extract all colonists
 
 SELECT 
-CONCAT_WS(' ', s.`first_name`, s.`last_name`) as `full_name`,
-SUBSTRING(`email`, 2,10) as `username`,
-REVERSE(`phone`) as `password`
-FROM `students` as s
-LEFT JOIN `students_courses` as sc
-ON s.`id` = sc.`student_id`
-WHERE sc.`course_id` IS NULL
-ORDER BY `password` DESC;
+    c.`id`,
+    CONCAT_WS(' ', c.`first_name`, c.`last_name`) AS `full_name`,
+    c.`ucn`
+FROM
+    `colonists` AS c
+ORDER BY c.`first_name` ASC , c.`last_name` ASC , c.`id` ASC;
 
-# --- 08. Students count
+# --- 06.	Extract all military journeys
 
 SELECT 
-COUNT(sc.`student_id`) as `students_count`,
-u.`name` as `university_name`
-FROM `universities` as u
-JOIN `courses` as c
-ON u.`id` = c.`university_id`
-JOIN `students_courses` as sc
-ON  c.`id` = sc.`course_id`
-GROUP BY u.`id`
-HAVING `students_count` >= 8
-ORDER BY `students_count` DESC, `university_name` DESC;
+    j.`id`, j.`journey_start`, j.`journey_end`
+FROM
+    `journeys` AS j
+WHERE
+    j.`purpose` = 'Military'
+ORDER BY j.`journey_start` ASC;
 
-# --- 09. Price rankings
+# --- 07. Extract all pilots
 
-SELECT u.`name` as `university_name`,
-c.`name` as `city_name`, 
-u.`address`,
-(CASE
-    WHEN u.`tuition_fee` < 800 THEN "Cheap"
-    WHEN u.`tuition_fee` BETWEEN 800 AND 1200 THEN "normal"
-    WHEN u.`tuition_fee` BETWEEN 1200 AND 2500 THEN "high"
-    ELSE "expensive"
-END) AS `price_rank`, u.`tuition_fee`
-FROM `universities` as u
-JOIN `cities` as c
-ON c.`id` = u.`city_id`
-ORDER BY u.`tuition_fee` ASC;
+SELECT 
+    c.`id`,
+    CONCAT_WS(' ', c.`first_name`, c.`last_name`) AS `full_name`
+FROM
+    `colonists` AS c
+        JOIN
+    `travel_cards` AS tc ON tc.`colonist_id` = c.`id`
+WHERE
+    tc.`job_during_journey` = 'Pilot'
+ORDER BY c.`id` ASC;
 
-# --- 10.Average grades
-DELIMITER $$$
+# --- 08. Count all colonists that are on technical journey
 
-CREATE DEFINER=`root`@`localhost` FUNCTION `udf_average_alumni_grade_by_course_name`(course_name VARCHAR(60)) RETURNS decimal(19,2)
+SELECT 
+    COUNT(c.`id`) AS `count`
+FROM
+    `colonists` AS c
+        JOIN
+    `travel_cards` AS tc ON tc.`colonist_id` = c.`id`
+        JOIN
+    `journeys` AS j ON j.`id` = tc.`journey_id`
+WHERE j.`purpose` = 'Technical';
+
+# --- 09.Extract the fastest spaceship
+
+SELECT s.`name` AS `spaceship_name`, port.`name` AS `spaceport_name`
+FROM `spaceships` AS s
+JOIN `journeys` AS j
+ON j.`spaceship_id` = s.`id`
+JOIN `spaceports` as port
+ON j.`destination_spaceport_id` = port.`id`
+ORDER BY s.`light_speed_rate` DESC
+LIMIT 1;
+
+# --- 10.Extract spaceships with pilots younger than 30 years
+
+SELECT s.`name`, s.`manufacturer`, tc.`id`
+FROM `spaceships` as s
+JOIN `journeys` as j
+ON j.`spaceship_id` = s.`id`
+JOIN `travel_cards` as tc
+ON tc.`journey_id` = j.`id`
+JOIN `colonists` as c
+ON c.`id` = tc.`colonist_id`
+WHERE tc.`job_during_journey` = 'Pilot' AND YEAR(c.`birth_date`) > YEAR(DATE_SUB('2019-01-01', INTERVAL 30 YEAR))
+ORDER BY s.`name`;
+
+# --- 11. Extract all educational mission planets and spaceports
+
+SELECT p.`name` as `planet_name`, sp.`name` as `spaceport_name`, j.`id`
+FROM `planets` as p
+JOIN `spaceports` as sp
+ON p.`id` = sp.`planet_id`
+JOIN `journeys` as j
+ON j.`destination_spaceport_id` = sp.`id`
+WHERE j.`purpose` = 'Educational'
+ORDER BY sp.`name` DESC;
+
+# --- 12. Extract all planets and their journey count
+
+SELECT p.`name` as `planet_name`, COUNT(j.`id`) as `journeys_count`
+FROM `planets` as p
+JOIN `spaceports` as sp
+ON p.`id` = sp.`planet_id`
+JOIN `journeys` as j
+ON j.`destination_spaceport_id` = sp.`id`
+GROUP BY p.`name`
+ORDER BY `journeys_count` DESC ,p.`name` DESC;
+
+# --- 13. Extract the shortest journey
+
+SELECT j.`id`, p.`name` as `planet_name`, sp.`name` as `spaceport_name`, j.`purpose` as `journey_purpose`
+FROM `journeys` as j
+JOIN `spaceports` as sp
+ON j.`destination_spaceport_id` = sp.`id`
+JOIN `planets` as p
+ON p.`id` = sp.`planet_id`
+ORDER BY (DATEDIFF(j.`journey_end`,j.`journey_start` )) ASC
+LIMIT 1;
+
+# --- 14. Extract the shortest journey
+
+SELECT tc.`job_during_journey`
+FROM `travel_cards` as tc
+WHERE tc.`journey_id` =  (
+  SELECT j.`id`
+  FROM `journeys` as j
+  ORDER BY DATEDIFF(j.journey_end, j.journey_start) DESC
+  LIMIT 1
+)
+GROUP BY tc.`job_during_journey`
+ORDER BY COUNT(tc.`job_during_journey`)
+LIMIT 1;
+ 
+# --- 15. Get colonists count
+
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` FUNCTION `udf_count_colonists_by_destination_planet`(planet_name VARCHAR (30)) RETURNS int
     DETERMINISTIC
 BEGIN
-DECLARE average_grade DECIMAL(19, 2);
-DELIMITER 
-SET average_grade := (
-	SELECT AVG(sc.`grade`) 
-	FROM `courses` as c
-	JOIN `students_courses` as sc
-	ON c.`id` = sc.`course_id`
-	JOIN `students` as s
-	ON s.`id` = sc.`student_id`
-	WHERE s.`is_graduated` = TRUE AND c.`name` = course_name
-	GROUP BY c.`name`
+
+RETURN (
+	  SELECT COUNT(c.`id`)
+	  FROM `colonists` as c
+      JOIN `travel_cards` as tc on c.`id` = tc.`colonist_id`
+      JOIN `journeys` as j on tc.`journey_id` = j.`id`
+      JOIN `spaceports` s on j.`destination_spaceport_id` = s.`id`
+      JOIN `planets` as p on s.`planet_id` = p.`id`
+      WHERE p.`name` = planet_name
 );
-
-RETURN average_grade;
-END $$$
-
+END //
 DELIMITER ;
 
-SELECT c.`name`, udf_average_alumni_grade_by_course_name('Quantum Physics') as `average_alumni_grade` 
-FROM `courses` c 
-WHERE c.`name` = 'Quantum Physics';
+# --- 16. Modify spaceship
 
-# --- 11.Average grades
-
-DELIMITER $$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `udp_graduate_all_students_by_year`(year_started INT)
-BEGIN
-UPDATE `students` as s
-	JOIN `students_courses` as sc
-    ON s.`id` = sc.`student_id`
-    JOIN `courses` as c
-    ON c.`id` = sc.`course_id`
-SET s.`is_graduated` = TRUE
-WHERE YEAR(c.`start_date`) = year_started;
-END $$$
-
+DELIMITER //
+CREATE PROCEDURE udp_modify_spaceship_light_speed_rate(spaceship_name VARCHAR(50), light_speed_rate_increse INT(11))
+  BEGIN
+    if (SELECT COUNT(ss.`name`) FROM `spaceships` as ss WHERE ss.`name` = spaceship_name > 0) 
+    THEN
+      UPDATE `spaceships` as ss
+        SET ss.`light_speed_rate` = ss.`light_speed_rate` + light_speed_rate_increse
+        WHERE ss.`name` = spaceship_name;
+    ELSE
+      SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Spaceship you are trying to modify does not exists.';
+      ROLLBACK;
+    END IF;
+  END //
+  
 DELIMITER ;
 
 
-
-CALL udp_graduate_all_students_by_year(2017);
