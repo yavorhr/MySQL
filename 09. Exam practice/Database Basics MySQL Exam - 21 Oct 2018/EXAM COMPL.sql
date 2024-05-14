@@ -69,15 +69,15 @@ REFERENCES `courses`(`id`)
 
 # --- 02. Insert
 
- INSERT INTO `courses` (`name`, `duration_hours`, `start_date`, `teacher_name`, `description`, `university_id`)
- SELECT (CONCAT(c.`teacher_name`, ' course')) as `name`,
- CHAR_LENGTH(`name`)/10 as `duration_hours`, 
- DATE(c.`start_date`+5) as `start_date`,
- REVERSE(c.`teacher_name`) as `teacher_name` ,
- CONCAT('Course ', c.`teacher_name`, REVERSE(c.`description`)) as `description`, 
- DAY(`start_date`) as `university_id` 
- FROM `courses` as c
- WHERE c.`id` <= 5;
+INSERT INTO `courses` (`name`, `duration_hours`, `start_date`, `teacher_name`, `description`, `university_id`)
+SELECT (CONCAT(c.`teacher_name`, ' course')) as `name`,
+CHAR_LENGTH(`name`)/10 as `duration_hours`, 
+DATE(c.`start_date`+5) as `start_date`,
+REVERSE(c.`teacher_name`) as `teacher_name` ,
+CONCAT('Course ', c.`teacher_name`, REVERSE(c.`description`)) as `description`, 
+DAY(`start_date`) as `university_id` 
+FROM `courses` as c
+WHERE c.`id` <= 5;
  
  # --- 03. Update
  
@@ -91,8 +91,16 @@ WHERE u.`id`BETWEEN 5 AND 12;
  FROM `universities` as u
  WHERE u.`number_of_staff` IS NULL;
  
-  # --- 05. Cities
+ # --- 05. Cities
   
   SELECT * FROM `cities`
   ORDER BY `population` DESC;
+  
+# --- 06. Students age
+
+SELECT `first_name`, `last_name`, `age`, `phone`, `email`
+FROM `students`
+WHERE `age` >= 21
+ORDER BY `first_name` DESC, `email` ASC, `id` ASC
+LIMIT 10;
   
