@@ -91,3 +91,8 @@ WHERE u.`id`BETWEEN 5 AND 12;
  FROM `universities` as u
  WHERE u.`number_of_staff` IS NULL;
  
+  # --- 05. Cities
+  
+  SELECT * FROM `cities`
+  ORDER BY `population` DESC;
+  
