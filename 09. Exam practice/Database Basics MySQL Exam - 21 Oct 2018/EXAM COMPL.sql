@@ -146,4 +146,33 @@ JOIN `cities` as c
 ON c.`id` = u.`city_id`
 ORDER BY u.`tuition_fee` ASC;
 
+# --- 10.Average grades
+DELIMITER $$$
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `udf_average_alumni_grade_by_course_name`(course_name VARCHAR(60)) RETURNS decimal(19,2)
+    DETERMINISTIC
+BEGIN
+DECLARE average_grade DECIMAL(19, 2);
+DELIMITER 
+SET average_grade := (
+	SELECT AVG(sc.`grade`) 
+	FROM `courses` as c
+	JOIN `students_courses` as sc
+	ON c.`id` = sc.`course_id`
+	JOIN `students` as s
+	ON s.`id` = sc.`student_id`
+	WHERE s.`is_graduated` = TRUE AND c.`name` = course_name
+	GROUP BY c.`name`
+);
+
+RETURN average_grade;
+END $$$
+
+DELIMITER ;
+
+SELECT c.`name`, udf_average_alumni_grade_by_course_name('Quantum Physics') as `average_alumni_grade` 
+FROM `courses` c 
+WHERE c.`name` = 'Quantum Physics';
+
+
 
