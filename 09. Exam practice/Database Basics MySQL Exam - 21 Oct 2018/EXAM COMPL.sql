@@ -130,3 +130,20 @@ GROUP BY u.`id`
 HAVING `students_count` >= 8
 ORDER BY `students_count` DESC, `university_name` DESC;
 
+# --- 09. Price rankings
+
+SELECT u.`name` as `university_name`,
+c.`name` as `city_name`, 
+u.`address`,
+(CASE
+    WHEN u.`tuition_fee` < 800 THEN "Cheap"
+    WHEN u.`tuition_fee` BETWEEN 800 AND 1200 THEN "normal"
+    WHEN u.`tuition_fee` BETWEEN 1200 AND 2500 THEN "high"
+    ELSE "expensive"
+END) AS `price_rank`, u.`tuition_fee`
+FROM `universities` as u
+JOIN `cities` as c
+ON c.`id` = u.`city_id`
+ORDER BY u.`tuition_fee` ASC;
+
+
