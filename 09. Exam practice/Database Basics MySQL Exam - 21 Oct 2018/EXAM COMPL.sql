@@ -174,5 +174,22 @@ SELECT c.`name`, udf_average_alumni_grade_by_course_name('Quantum Physics') as `
 FROM `courses` c 
 WHERE c.`name` = 'Quantum Physics';
 
+# --- 11.Average grades
+
+DELIMITER $$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `udp_graduate_all_students_by_year`(year_started INT)
+BEGIN
+UPDATE `students` as s
+	JOIN `students_courses` as sc
+    ON s.`id` = sc.`student_id`
+    JOIN `courses` as c
+    ON c.`id` = sc.`course_id`
+SET s.`is_graduated` = TRUE
+WHERE YEAR(c.`start_date`) = year_started;
+END $$$
+
+DELIMITER ;
 
 
+
+CALL udp_graduate_all_students_by_year(2017);
