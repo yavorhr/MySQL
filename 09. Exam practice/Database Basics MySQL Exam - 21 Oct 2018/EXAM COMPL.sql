@@ -84,3 +84,10 @@ REFERENCES `courses`(`id`)
 UPDATE `universities` as u
 SET u.`tuition_fee` =  u.`tuition_fee` + 300
 WHERE u.`id`BETWEEN 5 AND 12;
+
+ # --- 04. Delete
+ 
+ DELETE u 
+ FROM `universities` as u
+ WHERE u.`number_of_staff` IS NULL;
+ 
