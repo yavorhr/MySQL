@@ -65,6 +65,14 @@ c.`id`
 FROM `clients` as c
 WHERE c.`id` BETWEEN 191 AND 200;
 
+# --- 03. Update
+
+UPDATE `employees_client`
+SET `employee_id` = ()
+WHERE `employee_id` = `client_id`;
+
+
+
 
 
 
