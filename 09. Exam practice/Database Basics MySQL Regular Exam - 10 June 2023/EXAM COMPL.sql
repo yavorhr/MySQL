@@ -70,7 +70,8 @@ REFERENCES `courses`(`id`)
 # --- 02. Insert
 
 INSERT INTO `courses` (`name`, `duration_hours`, `start_date`, `teacher_name`, `description`, `university_id`)
-SELECT (CONCAT(c.`teacher_name`, ' course')) as `name`,
+SELECT 
+(CONCAT(c.`teacher_name`, ' course')) as `name`,
 CHAR_LENGTH(`name`)/10 as `duration_hours`, 
 DATE(c.`start_date`+5) as `start_date`,
 REVERSE(c.`teacher_name`) as `teacher_name` ,
